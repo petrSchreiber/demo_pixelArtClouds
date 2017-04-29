@@ -1,2 +1,2 @@
-# demo_pixelArtClouds
-Sample demo using *elArt* and *drawMe*
+# Demo "pixel art clouds"
+Sample demo using *elArt* and *drawMe*.

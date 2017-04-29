@@ -1,0 +1,78 @@
+' Demo "pixel art clouds"
+
+#includedir "elArt"
+#includedir "elArt\offScreenRenderer"
+#includedir "drawMe"
+#include "elArt.tbasicu"
+#include "drawMe.tbasicu"
+
+function tbMain()
+  
+  single skySeed = gettickcount/1000 ' -- Play with the divisor! ;)
+  
+  dim art as elArt
+  
+  art.CreateCanvas("Cloudy evening - press ESC to quit", 1280, 720, 180, 90)
+         
+  ' -- Main loop
+  while art.HasCanvas
+    
+    art.beginDrawing
+   
+      renderSky(skySeed)
+     
+    art.endDrawing
+
+    if art.keyDown(%VK_ESCAPE) then exit while
+
+  wend
+
+  art.DestroyCanvas
+end function
+
+function renderSky(seed as long)
+  dim d as drawMe
+  
+  tbgl_pushStateProtect %TBGL_TEXTURING | %TBGL_DEPTH
+    
+    ' -- Sky gradient
+    d.verticalGradient(1280, 720, d.toColor(255, 192, 128), d.toColor(64, 128, 255))
+    
+    long i
+    randomize(seed)
+    
+    ' -- Individual clouds, 20 of them
+    single width
+    for i = 1 to 20
+    
+      width = rnd(50, 300) 
+      
+      drawCloud(rnd(100, 1180), rnd(100, 620), ' -- Location
+                width, rnd(width/4, width/2),  ' -- Width, Height
+                seed+i)                        ' -- Random seed
+    next            
+  tbgl_popStateProtect
+   
+end function
+
+function drawCloud(x as single, y as single, width as single, height as single, seed as long)
+  dim d as drawMe
+  
+  tbgl_pushBlendFunc %GL_SRC_ALPHA, %GL_ONE_MINUS_SRC_ALPHA
+    tbgl_pushState %TBGL_BLEND
+          
+    long i
+    long base     = min(width, height)
+    long sizeFrom = rnd(base/4, base)
+    long sizeTo   = rnd(base/2, base)
+    long maxCount = 20 ' -- Play with this to achieve different results
+    randomize(seed)
+      for i = 1 to maxCount
+        d.drawAt(x+rndf(-width/2,width/2), y+rndf(-height/2,height/2))
+        d.coloredCircle(sizeFrom + (sizeTo-sizeFrom)/2 + sin(timer/10+i) * (sizeTo-sizeFrom),
+                        d.toColor(255, 255, 255, 255/maxCount))
+      next                        
+
+    tbgl_popState
+  tbgl_popBlendFunc
+end function

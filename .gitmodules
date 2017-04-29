@@ -1,0 +1,6 @@
+[submodule "elArt"]
+	path = elArt
+	url = https://github.com/petrSchreiber/elArt
+[submodule "drawMe"]
+	path = drawMe
+	url = https://github.com/petrSchreiber/drawMe
